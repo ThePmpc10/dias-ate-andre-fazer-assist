@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palavra do Dia + Cronômetro</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            background: #121213; /* Fundo escuro estilo Wordle */
+            color: white;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .big-text {
+            font-size: 3.5rem; /* Texto bem maior */
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .timer {
+            font-size: 4rem; /* Cronômetro bem maior */
+            font-weight: 700;
+            color: red; /* Cor vermelha para destaque */
+            margin-bottom: 50px;
+        }
+
+        .game-container {
+            margin-top: 50px; /* Jogo mais abaixo */
+        }
+
+        .grid {
+            display: grid;
+            grid-template-rows: repeat(5, 1fr);
+            grid-gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .cell {
+            width: 60px;
+            height: 60px;
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            line-height: 60px;
+            border: 2px solid #3a3a3c;
+            text-transform: uppercase;
+            background-color: #121213;
+            color: white;
+        }
+
+        .correct { background: #538d4e; }  /* Verde: correta na posição correta */
+        .wrong-position { background: #b59f3b; }  /* Amarela: correta na posição errada */
+        .wrong { background: #3a3a3c; } /* Cinza: não está na palavra */
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="big-text">Dias até o André fazer a assistência</div>
+    <div class="timer" id="timer">0d 00:00:00</div>
+</div>
+
+<div class="game-container">
+    <h2>PALAVRA DO DIA</h2>
+    <div class="grid" id="grid"></div>
+    <div class="message" id="message"></div>
+</div>
+
+<script>
+    // 🕒 Cronômetro Global (Sem Milissegundos)
+    const dataDeInicio = new Date('2025-03-10T00:00:00Z').getTime();
+
+    function atualizarCronometro() {
+        const agora = new Date().getTime();
+        const diferenca = agora - dataDeInicio;
+
+        const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
+        const horas = Math.floor((diferenca % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutos = Math.floor((diferenca % (1000 * 60 * 60)) / (1000 * 60));
+        const segundos = Math.floor((diferenca % (1000 * 60)) / 1000);
+
+        document.getElementById("timer").innerText =
+            `${dias}d ${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
+    }
+
+    setInterval(atualizarCronometro, 1000);
+
+    // 🎮 Jogo Palavra do Dia
+    const palavras = ["BOLAS", "GRITO", "NORTE", "FUTEB", "TREVO"];
+    const palavraDoDia = palavras[new Date().getDate() % palavras.length]; // Gera uma palavra nova por dia
+
+    let tentativaAtual = 0;
+    let tentativa = "";
+
+    function criarGrid() {
+        const grid = document.getElementById("grid");
+
+        for (let i = 0; i < 5; i++) {
+            const row = document.createElement("div");
+            row.classList.add("row");
+
+            for (let j = 0; j < 5; j++) {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.id = `cell-${i}-${j}`;
+                row.appendChild(cell);
+            }
+
+            grid.appendChild(row);
+        }
+    }
+
+    function processarInput(event) {
+        const key = event.key.toUpperCase();
+
+        if (key === "ENTER") {
+            verificarPalavra();
+        } else if (key === "BACKSPACE") {
+            apagarLetra();
+        } else if (/^[A-Z]$/.test(key) && tentativa.length < 5) {
+            adicionarLetra(key);
+        }
+    }
+
+    function adicionarLetra(letra) {
+        tentativa += letra;
+        document.getElementById(`cell-${tentativaAtual}-${tentativa.length - 1}`).innerText = letra;
+    }
+
+    function apagarLetra() {
+        if (tentativa.length > 0) {
+            tentativa = tentativa.slice(0, -1);
+            document.getElementById(`cell-${tentativaAtual}-${tentativa.length}`).innerText = "";
+        }
+    }
+
+    function verificarPalavra() {
+        if (tentativa.length !== 5) {
+            mostrarMensagem("A palavra tem 5 letras!");
+            return;
+        }
+
+        const palavraTemp = palavraDoDia.split("");
+
+        // Primeiro passo: marcar os verdes
+        for (let i = 0; i < 5; i++) {
+            const cell = document.getElementById(`cell-${tentativaAtual}-${i}`);
+            if (tentativa[i] === palavraDoDia[i]) {
+                cell.classList.add("correct");
+                palavraTemp[i] = "_"; // Remove a letra já usada
+            }
+        }
+
+        // Segundo passo: marcar os amarelos
+        for (let i = 0; i < 5; i++) {
+            const cell = document.getElementById(`cell-${tentativaAtual}-${i}`);
+            if (!cell.classList.contains("correct") && palavraTemp.includes(tentativa[i])) {
+                cell.classList.add("wrong-position");
+                palavraTemp[palavraTemp.indexOf(tentativa[i])] = "_"; // Remove a letra usada
+            } else if (!cell.classList.contains("correct")) {
+                cell.classList.add("wrong");
+            }
+        }
+
+        // Se acertou a palavra
+        if (tentativa === palavraDoDia) {
+            mostrarMensagem("🎉 Parabéns! Acertaste!");
+            window.removeEventListener("keydown", processarInput);
+            return;
+        }
+
+        // Próxima tentativa
+        tentativaAtual++;
+        tentativa = "";
+
+        if (tentativaAtual === 5) {
+            mostrarMensagem(`❌ Fim de jogo! A palavra era: ${palavraDoDia}`);
+            window.removeEventListener("keydown", processarInput);
+        }
+    }
+
+    function mostrarMensagem(msg) {
+        document.getElementById("message").innerText = msg;
+    }
+
+    criarGrid();
+    window.addEventListener("keydown", processarInput);
+
+</script>
+
+</body>
+</html>
