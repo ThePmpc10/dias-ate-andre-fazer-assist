@@ -105,8 +105,8 @@
 </div>
 
 <script>
-    // 🕒 Cronômetro Global (Sem Milissegundos)
-    const dataDeInicio = new Date('2025-03-10T00:00:00Z').getTime();
+    // 🕒 Definir uma data fixa no passado (ajusta conforme necessário)
+    const dataDeInicio = new Date("2025-03-10T21:35:00Z").getTime(); // Define um ponto fixo no tempo
 
     function atualizarCronometro() {
         const agora = new Date().getTime();
@@ -121,7 +121,9 @@
             `${dias}d ${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
     }
 
+    // Atualiza o cronômetro a cada segundo
     setInterval(atualizarCronometro, 1000);
+    atualizarCronometro(); // Atualiza imediatamente ao carregar a página
 
     // 🎮 Jogo Palavra do Dia
     const palavras = ["BOLAS", "GRITO", "NORTE", "AREIA", "TREVO"];
