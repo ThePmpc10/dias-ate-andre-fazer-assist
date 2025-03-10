@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Palavra do Dia + Cronômetro</title>
+    <title>Assist</title>
+    <link rel="icon" type="image/png" href="letter_105082.ico">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
 
@@ -16,7 +17,7 @@
         body {
             font-family: 'Poppins', sans-serif;
             text-align: center;
-            background: #121213; /* Fundo escuro estilo Wordle */
+            background: #121213;
             color: white;
         }
 
@@ -25,21 +26,21 @@
         }
 
         .big-text {
-            font-size: 3.5rem; /* Texto bem maior */
+            font-size: 3.5rem;
             font-weight: 700;
             margin-bottom: 10px;
             color: white;
         }
 
         .timer {
-            font-size: 4rem; /* Cronômetro bem maior */
+            font-size: 4rem;
             font-weight: 700;
-            color: red; /* Cor vermelha para destaque */
+            color: red;
             margin-bottom: 50px;
         }
 
         .game-container {
-            margin-top: 50px; /* Jogo mais abaixo */
+            margin-top: 50px;
         }
 
         .grid {
@@ -69,14 +70,22 @@
             color: white;
         }
 
-        .correct { background: #538d4e; }  /* Verde: correta na posição correta */
-        .wrong-position { background: #b59f3b; }  /* Amarela: correta na posição errada */
-        .wrong { background: #3a3a3c; } /* Cinza: não está na palavra */
+        .correct { background: #538d4e; }
+        .wrong-position { background: #b59f3b; }
+        .wrong { background: #3a3a3c; }
 
         .message {
             margin-top: 20px;
             font-size: 1.5rem;
             font-weight: bold;
+        }
+
+        /* Input invisível para abrir o teclado no telemóvel */
+        .hidden-input {
+            position: absolute;
+            opacity: 0;
+            width: 1px;
+            height: 1px;
         }
 
     </style>
@@ -89,9 +98,10 @@
 </div>
 
 <div class="game-container">
-    <h2>PALAVRA DO DIA</h2>
+    <h1 style="font-size: 20px">Para não terem perdido o vosso tempo em vão, joguem aqui o jogo da palavra do dia.</h1>
     <div class="grid" id="grid"></div>
     <div class="message" id="message"></div>
+    <input type="text" id="mobileInput" class="hidden-input" maxlength="5" />
 </div>
 
 <script>
@@ -114,7 +124,7 @@
     setInterval(atualizarCronometro, 1000);
 
     // 🎮 Jogo Palavra do Dia
-    const palavras = ["BOLAS", "GRITO", "NORTE", "FUTEB", "TREVO"];
+    const palavras = ["BOLAS", "GRITO", "NORTE", "AREIA", "TREVO"];
     const palavraDoDia = palavras[new Date().getDate() % palavras.length]; // Gera uma palavra nova por dia
 
     let tentativaAtual = 0;
@@ -131,11 +141,17 @@
                 const cell = document.createElement("div");
                 cell.classList.add("cell");
                 cell.id = `cell-${i}-${j}`;
+                cell.addEventListener("click", () => abrirTeclado()); // Abre o teclado no telemóvel
                 row.appendChild(cell);
             }
 
             grid.appendChild(row);
         }
+    }
+
+    function abrirTeclado() {
+        const input = document.getElementById("mobileInput");
+        input.focus();
     }
 
     function processarInput(event) {
