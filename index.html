@@ -88,6 +88,31 @@
             height: 1px;
         }
 
+        #emailButton {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 15px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s ease-in-out;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            outline: none;
+        }
+
+        #emailButton:hover {
+            background: linear-gradient(45deg, #ff4b2b, #ff416c);
+            transform: scale(1.05);
+            box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.3);
+        }
+
+        #emailButton:active {
+            transform: scale(0.98);
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
     </style>
 </head>
 <body>
@@ -95,7 +120,7 @@
 <div class="container">
     <div class="big-text">Dias até o André fazer a assistência</div>
     <div class="timer" id="timer">0d 00:00:00</div>
-    <button id="sendEmailButton" onclick="enviarEmail()">📩 Enviar E-mail para o André</button>
+    <button id="emailButton" onclick="enviarEmail()">📩 Clica para enviar email a relembrar o André</button>
     <p id="statusMessage"></p>
 </div>
 
