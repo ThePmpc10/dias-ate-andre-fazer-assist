@@ -95,6 +95,8 @@
 <div class="container">
     <div class="big-text">Dias até o André fazer a assistência</div>
     <div class="timer" id="timer">0d 00:00:00</div>
+    <button id="sendEmailButton" onclick="enviarEmail()">📩 Enviar E-mail para o André</button>
+    <p id="statusMessage"></p>
 </div>
 
 <div class="game-container">
@@ -231,6 +233,44 @@
 
     criarGrid();
     window.addEventListener("keydown", processarInput);
+
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("sendEmailButton").addEventListener("click", enviarEmail);
+    });
+
+    function enviarEmail() {
+        console.log("Botão foi clicado! Tentando enviar e-mail...");
+
+        fetch("https://api.emailjs.com/api/v1.0/email/send", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({
+                service_id: "service_86v7pa8",
+                template_id: "template_hl5pgha",
+                user_id: "Yz31ZOOVkH8EDya8q",
+                template_params: {
+                    mensagem: "André - faz a assistência miúdo",
+                    reply_to: "andrefilipe.bastos@sapo.pt"
+                }
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById("statusMessage").innerText = "✅ Obrigado pela tua contribuição.";
+                    console.log("E-mail enviado com sucesso!");
+                } else {
+                    document.getElementById("statusMessage").innerText = "❌ Erro ao enviar e-mail.";
+                    console.error("Erro ao enviar e-mail:", response.statusText);
+                }
+            })
+            .catch(error => {
+                document.getElementById("statusMessage").innerText = "❌ Erro ao enviar e-mail.";
+                console.error("Erro ao enviar email:", error);
+            });
+    }
 
 </script>
 
