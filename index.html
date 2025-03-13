@@ -88,7 +88,7 @@
             height: 1px;
         }
 
-        #emailButton {
+        #emailButton, #toggleGameButton {
             background: linear-gradient(45deg, #ff416c, #ff4b2b);
             border: none;
             color: white;
@@ -102,13 +102,13 @@
             outline: none;
         }
 
-        #emailButton:hover {
+        #emailButton:hover, #toggleGameButton:hover {
             background: linear-gradient(45deg, #ff4b2b, #ff416c);
             transform: scale(1.05);
             box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.3);
         }
 
-        #emailButton:active {
+        #emailButton:active, #toggleGameButton:active {
             transform: scale(0.98);
             box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
         }
@@ -124,13 +124,23 @@
     <p id="statusMessage"></p>
 </div>
 
-<div class="game-container">
-    <h1 style="font-size: 20px">Para não terem perdido o vosso tempo em vão, joguem aqui o jogo da palavra do dia.</h1>
+
+
+<button id="toggleGameButton" style="margin-top: 20px; margin-bottom: 15px">Alternar Jogo</button>
+
+<div id="wordGame">
+    <h1 style="font-size: 20px">Jogo da Palavra do Dia</h1>
     <div class="grid" id="grid"></div>
     <div class="message" id="message"></div>
-    <input type="text" id="mobileInput" class="hidden-input" maxlength="5" />
 </div>
 
+<div id="equationGame" style="display: none;">
+    <h1 style="font-size: 20px">Jogo da Equação</h1>
+    <div class="grid" id="equationGrid"></div>
+    <div class="message" id="equationMessage"></div>
+</div>
+
+<script src="equation.js"></script>
 <script>
     // 🕒 Definir uma data fixa no passado (ajusta conforme necessário)
     const dataDeInicio = new Date("2025-03-10T21:35:00Z").getTime(); // Define um ponto fixo no tempo
@@ -153,7 +163,13 @@
     atualizarCronometro(); // Atualiza imediatamente ao carregar a página
 
     // 🎮 Jogo Palavra do Dia
-    const palavras = ["BOLAS", "GRITO", "NORTE", "AREIA", "TREVO"];
+    const palavras = [
+        "BOLAS", "GRITO", "NORTE", "TREVO", "FELIZ", "RAPAZ", "VIDRO", "LIVRO", "CASAS",
+        "PEDRA", "FLORE", "PLANO", "BRAVO", "VERDE", "DENTE", "FONTE", "GENTE", "MAGIA", "ROSAO",
+        "TERRA", "LUZES", "COSTA", "LIMAO", "MUNDO", "FALSO", "CERCA", "CHAVE", "TIGRE", "VENTO",
+        "TORRE", "NOITE", "FALHA", "FUGIR", "VAGAR", "FORCA", "VELHO", "CRISE", "ONIXA", "LANCE",
+        "PORTA", "SABOR", "TEMPO", "FOCAL", "NIVEL", "SABER", "GLIFO", "ATOMO", "VITAL", "RAIOS"
+    ];
     const palavraDoDia = palavras[new Date().getDate() % palavras.length]; // Gera uma palavra nova por dia
 
     let tentativaAtual = 0;
@@ -296,7 +312,6 @@
                 console.error("Erro ao enviar email:", error);
             });
     }
-
 </script>
 
 </body>
