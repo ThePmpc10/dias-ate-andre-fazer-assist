@@ -164,12 +164,8 @@
 
     // 🎮 Jogo Palavra do Dia
     const palavras = [
-        "BOLAS", "GRITO", "NORTE", "TREVO", "FELIZ", "RAPAZ", "VIDRO", "LIVRO", "CASAS",
-        "PEDRA", "FLORE", "PLANO", "BRAVO", "VERDE", "DENTE", "FONTE", "GENTE", "MAGIA", "ROSAO",
-        "TERRA", "LUZES", "COSTA", "LIMAO", "MUNDO", "FALSO", "CERCA", "CHAVE", "TIGRE", "VENTO",
-        "TORRE", "NOITE", "FALHA", "FUGIR", "VAGAR", "FORCA", "VELHO", "CRISE", "ONIXA", "LANCE",
-        "PORTA", "SABOR", "TEMPO", "FOCAL", "NIVEL", "SABER", "GLIFO", "ATOMO", "VITAL", "RAIOS"
-    ];
+         "RAPAZ", "VIDRO", "LIVRO", "CASAS",
+        "PEDRA"];
     const palavraDoDia = palavras[new Date().getDate() % palavras.length]; // Gera uma palavra nova por dia
 
     let tentativaAtual = 0;

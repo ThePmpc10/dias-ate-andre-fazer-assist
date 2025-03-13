@@ -17,52 +17,53 @@ document.addEventListener("DOMContentLoaded", function () {
     hiddenInput.classList.add("hidden-input");
     document.body.appendChild(hiddenInput);
 
-    function generateDailyEquation() {
-        const seed = new Date().getDate(); // Usa o dia do mês como semente
-        const operators = ['+', '-', '*', '/'];
-        let validEquation = "";
+    function safeEvaluate(num1, op1, num2, op2, num3) {
         let result;
-        let randomGen = (max) => (seed * 17) % max + 1; // Gera números previsíveis baseados na data
-
-        while (true) {
-            let num1 = randomGen(9);
-            let num2 = randomGen(9);
-            let num3 = randomGen(9);
-            let operator1 = operators[seed % operators.length];
-            let operator2 = operators[(seed + 1) % operators.length];
-
-            let equation = `${num1} ${operator1} ${num2} ${operator2} ${num3}`;
-
-            try {
-                result = new Function(`return (${equation})`)();
-                if (Number.isInteger(result) && result >= 0 && result < 100) {
-                    let resultStr = result < 10 ? `0${result}` : `${result}`;
-                    validEquation = `${num1}${operator1}${num2}${operator2}${num3}=${resultStr}`;
-                    break;
-                }
-            } catch (e) {
-                continue;
+        try {
+            if (op1 === "*" || op1 === "/") {
+                result = eval(`${num1} ${op1} ${num2}`);
+                result = eval(`${result} ${op2} ${num3}`);
+            } else {
+                result = eval(`${num2} ${op2} ${num3}`);
+                result = eval(`${num1} ${op1} ${result}`);
             }
+        } catch (e) {
+            return null;
         }
-        return validEquation;
+        return Number.isInteger(result) && result >= 0 && result < 100 ? result : null;
+    }
+
+    function generateDailyEquation() {
+        const operators = ['+', '-', '*', '/'];
+        const seed = new Date().getDate(); // Usa o dia do mês como semente
+        let num1 = (seed * 3) % 9 + 1;
+        let num2 = (seed * 5) % 9 + 1;
+        let num3 = (seed * 7) % 9 + 1;
+        let operator1 = operators[seed % operators.length];
+        let operator2 = operators[(seed + 1) % operators.length];
+
+        let result = safeEvaluate(num1, operator1, num2, operator2, num3);
+        if (result === null) return "5+3*2=11"; // Fallback seguro
+
+        let resultStr = result < 10 ? `0${result}` : `${result}`;
+        return `${num1}${operator1}${num2}${operator2}${num3}=${resultStr}`;
     }
 
     const correctEquation = generateDailyEquation();
 
     function createGrid() {
+        let gridHTML = "";
         for (let i = 0; i < maxAttempts; i++) {
-            const row = document.createElement("div");
-            row.classList.add("row");
-
+            gridHTML += '<div class="row">';
             for (let j = 0; j < equationLength; j++) {
-                const cell = document.createElement("div");
-                cell.classList.add("cell");
-                cell.id = `eq-cell-${i}-${j}`;
-                cell.addEventListener("click", () => selectCell(j));
-                row.appendChild(cell);
+                gridHTML += `<div class="cell" id="eq-cell-${i}-${j}"></div>`;
             }
-            equationGrid.appendChild(row);
+            gridHTML += '</div>';
         }
+        equationGrid.innerHTML = gridHTML;
+        document.querySelectorAll(".cell").forEach((cell, index) => {
+            cell.addEventListener("click", () => selectCell(index % equationLength));
+        });
     }
 
     function selectCell(index) {
@@ -75,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const validNumbers = "0123456789";
         const validOperators = "+-*/";
 
-        if (key === "Enter" && attempts[attemptIndex].join("" ).length === equationLength) {
+        if (key === "Enter" && attempts[attemptIndex].join("").length === equationLength) {
             checkEquation();
             return;
         }
